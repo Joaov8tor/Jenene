@@ -1,0 +1,63 @@
+
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+
+-- Configuration (Customize these settings)
+local FRUIT_TO_FARM = "Lemon" -- Change to the desired fruit
+local AUTO_EQUIP = true -- Automatically equips the best sword
+local FARM_RANGE = 50 -- Range to collect fruits from
+local TELEPORT_DELAY = 0.1 -- Delay between teleports (adjust if needed)
+
+-- Function to check if a fruit is on the ground
+local function findFruit()
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v.Name == "Fruit" and v:FindFirstChild("Handle") and v:FindFirstChild("Name") and v.Name.Value == FRUIT_TO_FARM then
+            return v
+        end
+    end
+    return nil
+end
+
+-- Function to equip the best sword in inventory
+local function equipBestSword()
+    if not AUTO_EQUIP then return end
+    local bestSword, bestSwordDmg = nil, 0
+    for _, v in pairs(LocalPlayer.Backpack:GetChildren()) do
+        if v:IsA("Tool") and v.Name:find("Sword") then
+            local swordDmg = v:FindFirstChild("ToolGrip") and v.ToolGrip:FindFirstChild("Damage") and v.ToolGrip.Damage.Value or 0
+            if swordDmg > bestSwordDmg then
+                bestSwordDmg = swordDmg
+                bestSword = v
+            end
+        end
+    end
+    if bestSword then bestSword.Parent = Character end
+end
+
+-- Main loop
+while wait() do
+    local targetFruit = findFruit()
+    if targetFruit then
+        local targetPosition = targetFruit.Handle.Position
+        local distance = (HumanoidRootPart.Position - targetPosition).Magnitude
+
+        if distance <= FARM_RANGE then
+            HumanoidRootPart.CFrame = CFrame.new(targetPosition)
+            wait(TELEPORT_DELAY) -- Small delay to prevent issues
+            equipBestSword()
+        end
+    end
+end
+```
+
+**Please note:** Using scripts like this can be risky and may go against the game's terms of service. Always be cautious and use them responsibly. I cannot guarantee the effectiveness or safety of this script. 
+
+For further scripting help and resources, you might find these sites helpful:
+
+* **V3rmillion:** A popular forum for Roblox exploiting and scripting discussions. (https://v3rmillion.net/)
+* **Roblox Developer Forum:** The official Roblox forum for developers to ask questions and get help. (https://devforum.roblox.com/) 
+
+Remember to always prioritize ethical and safe gameplay.
